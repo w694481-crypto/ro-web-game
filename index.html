@@ -20,7 +20,6 @@
       overflow: hidden;
     }
 
-    /* 主遊戲框架：滿版 16:9 風格佈局，背景為 RO 經典石磚圖案 */
     .game-viewport {
       width: 100vw;
       height: 100vh;
@@ -34,7 +33,6 @@
       position: relative;
     }
 
-    /* RO 原版風格視窗框 (淺色石膏半透明風格) */
     .ro-window {
       background: rgba(240, 244, 248, 0.92);
       border: 2px solid #a4b4c8;
@@ -46,7 +44,6 @@
       flex-direction: column;
     }
 
-    /* 經典 RO 視窗天藍色標題列 */
     .ro-header {
       background: linear-gradient(180deg, #7bb3ed 0%, #4a8ddb 100%);
       padding: 3px 8px;
@@ -70,7 +67,6 @@
       border-radius: 2px;
     }
 
-    /* ================= 1. 左上角：RO 經典基本訊息視窗 ================= */
     .player-status-panel {
       grid-column: 1;
       grid-row: 1;
@@ -119,7 +115,6 @@
       font-size: 13px;
     }
 
-    /* RO 原版條狀圖 */
     .ro-bar-group {
       display: flex;
       flex-direction: column;
@@ -156,4 +151,416 @@
       transition: width 0.2s;
     }
 
-    .fill-hp { background: linear
+    .fill-hp { background: linear-gradient(180deg, #81ec80 0%, #4cd34a 100%); }
+    .fill-sp { background: linear-gradient(180deg, #7dc7f9 0%, #3e9edb 100%); }
+    .fill-exp { background: linear-gradient(180deg, #60c5f1 0%, #2ba2db 100%); }
+
+    .ro-bar-text {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      font-size: 10px; line-height: 13px; text-align: center; color: #111; font-weight: bold;
+    }
+
+    .ro-stat-footer {
+      background: #e6ebf2;
+      border: 1px solid #b2c2d6;
+      border-radius: 3px;
+      padding: 6px;
+      margin-top: auto;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      color: #222;
+    }
+
+    .main-battle-area {
+      grid-column: 2;
+      grid-row: 1;
+      position: relative;
+      background: #d4dce8 url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png') no-repeat center;
+      background-size: cover;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      padding-bottom: 40px;
+    }
+
+    .stage-badge {
+      position: absolute;
+      top: 10px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #7a94b5;
+      padding: 4px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #1a3c6d;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .sprite-box {
+      width: 130px;
+      height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .sprite-img {
+      max-width: 110px;
+      max-height: 110px;
+      image-rendering: pixelated;
+    }
+
+    .damage-pop {
+      position: absolute;
+      top: 0;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff3333;
+      text-shadow: 1px 1px 0px #fff, -1px -1px 0px #fff;
+      animation: popUp 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes popUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-35px); }
+    }
+
+    .menu-panel {
+      grid-column: 3;
+      grid-row: 1;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ro-btn-classic {
+      background: linear-gradient(180deg, #f7f9fc 0%, #d8e2ee 100%);
+      border: 1px solid #7c93b2;
+      border-radius: 4px;
+      color: #1e3a63;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px 0 #fff;
+    }
+
+    .ro-btn-classic:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #e2ebf5 100%);
+      border-color: #5273a1;
+    }
+
+    .battle-log-panel {
+      grid-column: 1 / span 2;
+      grid-row: 2;
+    }
+
+    .log-body {
+      flex-grow: 1;
+      padding: 8px;
+      font-size: 12px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.6);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .log-dmg { color: #d63031; }
+    .log-reward { color: #0984e3; }
+    .log-sys { color: #27ae60; font-weight: bold; }
+
+    .chat-panel {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    .chat-tabs {
+      display: flex;
+      background: #c2d1e2;
+      border-bottom: 1px solid #9bb0c9;
+    }
+
+    .chat-tab {
+      flex: 1;
+      font-size: 11px;
+      padding: 4px 0;
+      text-align: center;
+      cursor: pointer;
+      color: #445566;
+      border-right: 1px solid #a3b8d1;
+    }
+
+    .chat-tab.active {
+      background: #f0f4f8;
+      color: #1a3c6d;
+      font-weight: bold;
+    }
+
+    .chat-body {
+      flex-grow: 1;
+      padding: 6px;
+      font-size: 11px;
+      overflow-y: auto;
+      background: #fff;
+      color: #333;
+    }
+
+    .chat-input-row {
+      display: flex;
+      padding: 4px;
+      background: #d8e2ee;
+      border-top: 1px solid #a4b4c8;
+    }
+
+    .chat-input-row input {
+      flex-grow: 1;
+      border: 1px solid #8ca0be;
+      border-radius: 2px;
+      padding: 3px 6px;
+      font-size: 11px;
+      outline: none;
+    }
+
+    .ro-popup-window {
+      position: absolute;
+      bottom: 220px;
+      left: 310px;
+      width: 400px;
+      height: 260px;
+      z-index: 100;
+      display: none;
+    }
+
+    .popup-body {
+      padding: 12px;
+      font-size: 13px;
+      color: #333;
+      flex-grow: 1;
+      background: #fff;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-viewport">
+    <div class="ro-window player-status-panel">
+      <div class="ro-header">
+        <span>基本訊息視窗</span>
+        <div class="ro-header-controls"><span>-</span><span>x</span></div>
+      </div>
+      <div class="status-body">
+        <div class="char-top-info">
+          <div class="char-avatar">
+            <img src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Avatar">
+          </div>
+          <div class="char-text-group">
+            <div class="char-name-title">戀愛達人</div>
+            <div style="color:#666;">初心者 (Novice)</div>
+          </div>
+        </div>
+
+        <div class="ro-bar-group">
+          <div class="ro-bar-row">
+            <div class="ro-bar-label">HP</div>
+            <div class="ro-bar-container">
+              <div id="hp-fill" class="ro-bar-fill fill-hp" style="width: 100%;"></div>
+              <div id="hp-text" class="ro-bar-text">323 / 323</div>
+            </div>
+          </div>
+
+          <div class="ro-bar-row">
+            <div class="ro-bar-label">SP</div>
+            <div class="ro-bar-container">
+              <div id="sp-fill" class="ro-bar-fill fill-sp" style="width: 100%;"></div>
+              <div id="sp-text" class="ro-bar-text">188 / 188</div>
+            </div>
+          </div>
+
+          <div class="ro-bar-row">
+            <div class="ro-bar-label">Base Lv. <span id="base-lv">1</span></div>
+            <div class="ro-bar-container">
+              <div id="exp-fill" class="ro-bar-fill fill-exp" style="width: 0%;"></div>
+              <div id="exp-text" class="ro-bar-text">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ro-stat-footer">
+          <span>Weight : 126 / 2430</span>
+          <span>Zeny : <b id="zeny-num" style="color:#d35400;">0</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ro-window main-battle-area">
+      <div class="stage-badge">📍 普隆德拉 南門外郊區</div>
+
+      <div class="sprite-box">
+        <div id="player-dmg"></div>
+        <img class="sprite-img" src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Player">
+      </div>
+
+      <div class="sprite-box">
+        <div id="mob-dmg"></div>
+        <div style="width:70px; height:6px; background:#ccc; border:1px solid #888; margin-bottom:4px; border-radius:2px; overflow:hidden;">
+          <div id="mob-hp-bar" style="width:100%; height:100%; background:#e74c3c;"></div>
+        </div>
+        <img id="mob-sprite" class="sprite-img" src="./images/poring.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png'" alt="Monster">
+      </div>
+    </div>
+
+    <div class="ro-window menu-panel">
+      <div class="ro-btn-classic" onclick="togglePopup('狩獵場視窗')">🗺️ 狩獵場</div>
+      <div class="ro-btn-classic" onclick="togglePopup('物品欄 (背包)')">🎒 背包</div>
+      <div class="ro-btn-classic" onclick="togglePopup('人物能力屬性狀態欄')">⚡ 能力/屬性</div>
+      <div class="ro-btn-classic" onclick="togglePopup('個人聊天室視窗')">💬 聊天室</div>
+      <div class="ro-btn-classic" onclick="togglePopup('交易所視窗')">⚖️ 交易所</div>
+      <div class="ro-btn-classic" onclick="togglePopup('遊戲選擇視窗')">⚙️ 設定</div>
+    </div>
+
+    <div class="ro-window battle-log-panel">
+      <div class="ro-header">
+        <span>⚔️ 戰鬥日誌</span>
+        <div class="ro-header-controls"><span>_</span><span>x</span></div>
+      </div>
+      <div id="log-list" class="log-body">
+        <div class="log-sys">[系統] 成功連線至伺服器，自動尋敵打怪中...</div>
+      </div>
+    </div>
+
+    <div class="ro-window chat-panel">
+      <div class="ro-header">
+        <span>💬 頻道聊天</span>
+        <div class="ro-header-controls"><span>_</span><span>x</span></div>
+      </div>
+      <div class="chat-tabs">
+        <div class="chat-tab active">全服</div>
+        <div class="chat-tab">公會</div>
+        <div class="chat-tab">隊伍</div>
+      </div>
+      <div id="chat-messages" class="chat-body">
+        <div style="color:#888;">[全服] 世界頻道連線成功。</div>
+      </div>
+      <div class="chat-input-row">
+        <input id="chat-input" type="text" placeholder="輸入訊息..." onkeypress="handleChatKey(event)">
+        <button class="ro-btn-classic" style="padding:1px 6px; font-size:11px; margin-left:4px;" onclick="sendChat()">送出</button>
+      </div>
+    </div>
+
+    <div id="ro-popup" class="ro-window ro-popup-window">
+      <div class="ro-header">
+        <span id="popup-title">物品欄</span>
+        <div class="ro-header-controls"><span onclick="closePopup()" style="cursor:pointer;">x</span></div>
+      </div>
+      <div id="popup-content" class="popup-body">
+        彈出內容加載中...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const player = { level: 1, hp: 323, maxHp: 323, sp: 188, maxSp: 188, atk: 22, exp: 0, maxExp: 50, zeny: 0 };
+    const currentMob = { name: "波利", hp: 70, maxHp: 70, atk: 8, exp: 20, zeny: 15 };
+
+    function showDmg(boxId, amount) {
+      const box = document.getElementById(boxId);
+      const pop = document.createElement('div');
+      pop.className = 'damage-pop';
+      pop.innerText = amount;
+      box.appendChild(pop);
+      setTimeout(() => pop.remove(), 600);
+    }
+
+    function addLog(text, typeClass = '') {
+      const list = document.getElementById('log-list');
+      const item = document.createElement('div');
+      if (typeClass) item.className = typeClass;
+      item.innerText = text;
+      list.appendChild(item);
+      list.scrollTop = list.scrollHeight;
+    }
+
+    function updateUI() {
+      document.getElementById('hp-fill').style.width = Math.max(0, (player.hp / player.maxHp)*100) + '%';
+      document.getElementById('hp-text').innerText = `${player.hp} / ${player.maxHp}`;
+      document.getElementById('sp-fill').style.width = Math.max(0, (player.sp / player.maxSp)*100) + '%';
+      document.getElementById('sp-text').innerText = `${player.sp} / ${player.maxSp}`;
+
+      const expPct = Math.min(100, (player.exp / player.maxExp)*100);
+      document.getElementById('exp-fill').style.width = expPct + '%';
+      document.getElementById('exp-text').innerText = `${Math.floor(expPct)}%`;
+
+      document.getElementById('base-lv').innerText = player.level;
+      document.getElementById('mob-hp-bar').style.width = Math.max(0, (currentMob.hp / currentMob.maxHp)*100) + '%';
+      document.getElementById('zeny-num').innerText = player.zeny;
+    }
+
+    function battleTurn() {
+      const pDmg = Math.floor(player.atk * (0.85 + Math.random() * 0.3));
+      currentMob.hp -= pDmg;
+      showDmg('mob-dmg', pDmg);
+      addLog(`對 ${currentMob.name} 造成 ${pDmg} 點傷害！`, 'log-dmg');
+
+      if (currentMob.hp <= 0) {
+        currentMob.hp = 0;
+        player.exp += currentMob.exp;
+        player.zeny += currentMob.zeny;
+        addLog(`擊殺 ${currentMob.name}！獲得 ${currentMob.exp} 經驗值，+${currentMob.zeny} Zeny`, 'log-reward');
+
+        if (player.exp >= player.maxExp) {
+          player.level++;
+          player.exp -= player.maxExp;
+          player.maxExp = Math.floor(player.maxExp * 1.5);
+          player.maxHp += 30;
+          player.hp = player.maxHp;
+          player.atk += 5;
+          addLog(`🎉 Base Level Up！升級至 Lv.${player.level}！`, 'log-sys');
+        }
+
+        updateUI();
+        setTimeout(() => { currentMob.hp = currentMob.maxHp; updateUI(); }, 1000);
+        return;
+      }
+
+      updateUI();
+    }
+
+    function sendChat() {
+      const input = document.getElementById('chat-input');
+      if (!input.value.trim()) return;
+      const box = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.innerText = `[戀愛達人]: ${input.value}`;
+      box.appendChild(msg);
+      box.scrollTop = box.scrollHeight;
+      input.value = '';
+    }
+
+    function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
+
+    function togglePopup(title) {
+      const pop = document.getElementById('ro-popup');
+      document.getElementById('popup-title').innerText = title;
+      document.getElementById('popup-content').innerHTML = `<p>這是<b>${title}</b>的遊戲介面。</p><br><p>可在這裡進行裝備更換、屬性點數分配或地圖切換！</p>`;
+      pop.style.display = 'flex';
+    }
+
+    function closePopup() {
+      document.getElementById('ro-popup').style.display = 'none';
+    }
+
+    setInterval(battleTurn, 1200);
+    updateUI();
+  </script>
+</body>
+</html>
