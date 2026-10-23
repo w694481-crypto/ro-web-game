@@ -1,566 +1,291 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ragnarok Idle RPG - 經典 RO 放置版</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      font-family: "Tahoma", "Microsoft JhengHei", sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RO 仙境傳說 - 放置版</title>
+    <style>
+        :root {
+            --ro-bg: #e2ded0;
+            --ro-panel: #f7f5ed;
+            --ro-border: #807661;
+            --ro-border-light: #ffffff;
+            --ro-border-dark: #4a4336;
+            --ro-header: #3a5375;
+            --ro-text: #2d261e;
+            --ro-hp: #ff4747;
+            --ro-sp: #3a85ff;
+            --ro-exp: #47c4ff;
+        }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: #1a1a1a;
-      overflow: hidden;
-    }
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
 
-    .game-viewport {
-      width: 100vw;
-      height: 100vh;
-      background: #8e9098 url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png') repeat;
-      background-size: 120px 120px;
-      display: grid;
-      grid-template-columns: 300px 1fr 220px;
-      grid-template-rows: 1fr 210px;
-      gap: 6px;
-      padding: 6px;
-      position: relative;
-    }
+        body {
+            background: var(--ro-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--ro-text);
+        }
 
-    .ro-window {
-      background: rgba(240, 244, 248, 0.92);
-      border: 2px solid #a4b4c8;
-      border-radius: 5px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+        .game-window {
+            width: 800px;
+            background: var(--ro-panel);
+            border: 3px solid var(--ro-border-dark);
+            box-shadow: 3px 3px 0 var(--ro-border-light) inset, -3px -3px 0 var(--ro-border-dark) inset, 5px 5px 15px rgba(0,0,0,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .ro-header {
-      background: linear-gradient(180deg, #7bb3ed 0%, #4a8ddb 100%);
-      padding: 3px 8px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
-      border-bottom: 1px solid #3b78c4;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 22px;
-    }
+        .window-header {
+            background: linear-gradient(to right, #2b4162, #12100e);
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .ro-header-controls span {
-      cursor: pointer;
-      font-size: 11px;
-      margin-left: 5px;
-      padding: 0 3px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 2px;
-    }
+        .battle-stage {
+            height: 320px;
+            background: linear-gradient(to bottom, #7bc8f6 0%, #e8f4f8 70%, #9bc250 70%, #6e9928 100%);
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding-bottom: 40px;
+            border-bottom: 2px solid var(--ro-border);
+        }
 
-    .player-status-panel {
-      grid-column: 1;
-      grid-row: 1;
-    }
+        .entity {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .status-body {
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      color: #333;
-      font-size: 12px;
-    }
+        .sprite {
+            height: 120px;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.4));
+            object-fit: contain;
+        }
 
-    .char-top-info {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+        .name-tag {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #ffde59;
+        }
 
-    .char-avatar {
-      width: 50px;
-      height: 50px;
-      border: 2px solid #8ca0be;
-      border-radius: 4px;
-      background: #fff;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
+        .hp-bar-container {
+            width: 100px;
+            height: 10px;
+            background: #222;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
 
-    .char-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+        .hp-bar-fill {
+            height: 100%;
+            background: linear-gradient(to bottom, #ff7b7b, #cc0000);
+            width: 100%;
+            transition: width 0.2s ease;
+        }
 
-    .char-text-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+        .hud-panel {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background: #ede8d8;
+        }
 
-    .char-name-title {
-      font-weight: bold;
-      color: #1a3c6d;
-      font-size: 13px;
-    }
+        .status-box {
+            background: var(--ro-panel);
+            border: 2px solid var(--ro-border);
+            padding: 10px;
+            border-radius: 4px;
+        }
 
-    .ro-bar-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 2px;
-    }
+        .bar-group {
+            margin-bottom: 8px;
+        }
 
-    .ro-bar-row {
-      display: flex;
-      align-items: center;
-      font-size: 11px;
-      gap: 6px;
-    }
+        .bar-label {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-    .ro-bar-label {
-      width: 55px;
-      font-weight: bold;
-      color: #444;
-      text-align: right;
-    }
+        .bar {
+            height: 14px;
+            background: #333;
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid #888;
+        }
 
-    .ro-bar-container {
-      flex-grow: 1;
-      height: 13px;
-      background: #e1e6ee;
-      border: 1px solid #99a8bd;
-      border-radius: 2px;
-      position: relative;
-      overflow: hidden;
-    }
+        .bar-hp { background: linear-gradient(to right, #ff4747, #ff8585); }
+        .bar-sp { background: linear-gradient(to right, #3a85ff, #85b5ff); }
+        .bar-exp { background: linear-gradient(to right, #00bfff, #80e5ff); }
 
-    .ro-bar-fill {
-      height: 100%;
-      transition: width 0.2s;
-    }
+        .battle-log {
+            height: 110px;
+            background: #1e1e1e;
+            color: #4af626;
+            font-family: monospace;
+            padding: 8px;
+            font-size: 12px;
+            overflow-y: auto;
+            border-radius: 4px;
+            border: 1px solid #555;
+        }
 
-    .fill-hp { background: linear-gradient(180deg, #81ec80 0%, #4cd34a 100%); }
-    .fill-sp { background: linear-gradient(180deg, #7dc7f9 0%, #3e9edb 100%); }
-    .fill-exp { background: linear-gradient(180deg, #60c5f1 0%, #2ba2db 100%); }
+        .damage-popup {
+            position: absolute;
+            color: #ff3333;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0px #000, -2px -2px 0px #000, 2px -2px 0px #000, -2px 2px 0px #000;
+            animation: popup 0.8s ease-out forwards;
+            pointer-events: none;
+        }
 
-    .ro-bar-text {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      font-size: 10px; line-height: 13px; text-align: center; color: #111; font-weight: bold;
-    }
-
-    .ro-stat-footer {
-      background: #e6ebf2;
-      border: 1px solid #b2c2d6;
-      border-radius: 3px;
-      padding: 6px;
-      margin-top: auto;
-      font-size: 11px;
-      display: flex;
-      justify-content: space-between;
-      color: #222;
-    }
-
-    .main-battle-area {
-      grid-column: 2;
-      grid-row: 1;
-      position: relative;
-      background: #d4dce8 url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png') no-repeat center;
-      background-size: cover;
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      padding-bottom: 40px;
-    }
-
-    .stage-badge {
-      position: absolute;
-      top: 10px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid #7a94b5;
-      padding: 4px 16px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #1a3c6d;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .sprite-box {
-      width: 130px;
-      height: 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      position: relative;
-    }
-
-    .sprite-img {
-      max-width: 110px;
-      max-height: 110px;
-      image-rendering: pixelated;
-    }
-
-    .damage-pop {
-      position: absolute;
-      top: 0;
-      font-size: 22px;
-      font-weight: bold;
-      color: #ff3333;
-      text-shadow: 1px 1px 0px #fff, -1px -1px 0px #fff;
-      animation: popUp 0.6s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes popUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-35px); }
-    }
-
-    .menu-panel {
-      grid-column: 3;
-      grid-row: 1;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .ro-btn-classic {
-      background: linear-gradient(180deg, #f7f9fc 0%, #d8e2ee 100%);
-      border: 1px solid #7c93b2;
-      border-radius: 4px;
-      color: #1e3a63;
-      padding: 10px;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-      box-shadow: 0 2px 3px rgba(0,0,0,0.15), inset 0 1px 0 #fff;
-    }
-
-    .ro-btn-classic:hover {
-      background: linear-gradient(180deg, #ffffff 0%, #e2ebf5 100%);
-      border-color: #5273a1;
-    }
-
-    .battle-log-panel {
-      grid-column: 1 / span 2;
-      grid-row: 2;
-    }
-
-    .log-body {
-      flex-grow: 1;
-      padding: 8px;
-      font-size: 12px;
-      overflow-y: auto;
-      background: rgba(255, 255, 255, 0.6);
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .log-dmg { color: #d63031; }
-    .log-reward { color: #0984e3; }
-    .log-sys { color: #27ae60; font-weight: bold; }
-
-    .chat-panel {
-      grid-column: 3;
-      grid-row: 2;
-    }
-
-    .chat-tabs {
-      display: flex;
-      background: #c2d1e2;
-      border-bottom: 1px solid #9bb0c9;
-    }
-
-    .chat-tab {
-      flex: 1;
-      font-size: 11px;
-      padding: 4px 0;
-      text-align: center;
-      cursor: pointer;
-      color: #445566;
-      border-right: 1px solid #a3b8d1;
-    }
-
-    .chat-tab.active {
-      background: #f0f4f8;
-      color: #1a3c6d;
-      font-weight: bold;
-    }
-
-    .chat-body {
-      flex-grow: 1;
-      padding: 6px;
-      font-size: 11px;
-      overflow-y: auto;
-      background: #fff;
-      color: #333;
-    }
-
-    .chat-input-row {
-      display: flex;
-      padding: 4px;
-      background: #d8e2ee;
-      border-top: 1px solid #a4b4c8;
-    }
-
-    .chat-input-row input {
-      flex-grow: 1;
-      border: 1px solid #8ca0be;
-      border-radius: 2px;
-      padding: 3px 6px;
-      font-size: 11px;
-      outline: none;
-    }
-
-    .ro-popup-window {
-      position: absolute;
-      bottom: 220px;
-      left: 310px;
-      width: 400px;
-      height: 260px;
-      z-index: 100;
-      display: none;
-    }
-
-    .popup-body {
-      padding: 12px;
-      font-size: 13px;
-      color: #333;
-      flex-grow: 1;
-      background: #fff;
-      overflow-y: auto;
-    }
-  </style>
+        @keyframes popup {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            50% { transform: translateY(-30px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1); }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="game-viewport">
-    <div class="ro-window player-status-panel">
-      <div class="ro-header">
-        <span>基本訊息視窗</span>
-        <div class="ro-header-controls"><span>-</span><span>x</span></div>
-      </div>
-      <div class="status-body">
-        <div class="char-top-info">
-          <div class="char-avatar">
-            <img src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Avatar">
-          </div>
-          <div class="char-text-group">
-            <div class="char-name-title">戀愛達人</div>
-            <div style="color:#666;">初心者 (Novice)</div>
-          </div>
+<div class="game-window">
+    <div class="window-header">
+        <span>Ragnarok Online - Idle Web Edition</span>
+        <span>Map: 普隆德拉 南門 (prt_fild08)</span>
+    </div>
+
+    <div class="battle-stage" id="stage">
+        <!-- 玩家 -->
+        <div class="entity" id="player-entity">
+            <div class="name-tag">Lv.<span id="player-level">1</span> 初學者</div>
+            <div class="hp-bar-container"><div class="hp-bar-fill" id="player-hp-bar"></div></div>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/25.gif" class="sprite" id="player-sprite" alt="Player">
         </div>
 
-        <div class="ro-bar-group">
-          <div class="ro-bar-row">
-            <div class="ro-bar-label">HP</div>
-            <div class="ro-bar-container">
-              <div id="hp-fill" class="ro-bar-fill fill-hp" style="width: 100%;"></div>
-              <div id="hp-text" class="ro-bar-text">323 / 323</div>
+        <!-- 怪物 -->
+        <div class="entity" id="monster-entity">
+            <div class="name-tag" id="monster-name">波利</div>
+            <div class="hp-bar-container"><div class="hp-bar-fill" id="monster-hp-bar"></div></div>
+            <!-- 直接讀取你剛剛上傳的 poring1.gif 或 poring2.gif -->
+            <img src="poring1.gif" class="sprite" id="monster-sprite" alt="Monster" onerror="this.onerror=null; this.src='poring2.gif';">
+        </div>
+    </div>
+
+    <div class="hud-panel">
+        <div class="status-box">
+            <div class="bar-group">
+                <div class="bar-label"><span>HP</span><span id="hp-text">100/100</span></div>
+                <div class="bar"><div class="bar-fill bar-hp" id="hp-fill" style="width: 100%; height:100%;"></div></div>
             </div>
-          </div>
-
-          <div class="ro-bar-row">
-            <div class="ro-bar-label">SP</div>
-            <div class="ro-bar-container">
-              <div id="sp-fill" class="ro-bar-fill fill-sp" style="width: 100%;"></div>
-              <div id="sp-text" class="ro-bar-text">188 / 188</div>
+            <div class="bar-group">
+                <div class="bar-label"><span>SP</span><span id="sp-text">30/30</span></div>
+                <div class="bar"><div class="bar-fill bar-sp" id="sp-fill" style="width: 100%; height:100%;"></div></div>
             </div>
-          </div>
-
-          <div class="ro-bar-row">
-            <div class="ro-bar-label">Base Lv. <span id="base-lv">1</span></div>
-            <div class="ro-bar-container">
-              <div id="exp-fill" class="ro-bar-fill fill-exp" style="width: 0%;"></div>
-              <div id="exp-text" class="ro-bar-text">0%</div>
+            <div class="bar-group">
+                <div class="bar-label"><span>EXP</span><span id="exp-text">0%</span></div>
+                <div class="bar"><div class="bar-fill bar-exp" id="exp-fill" style="width: 0%; height:100%;"></div></div>
             </div>
-          </div>
         </div>
 
-        <div class="ro-stat-footer">
-          <span>Weight : 126 / 2430</span>
-          <span>Zeny : <b id="zeny-num" style="color:#d35400;">0</b></span>
+        <div class="battle-log" id="battle-log">
+            [系統] 歡迎來到 RO 放置版！戰鬥開始...<br>
         </div>
-      </div>
     </div>
+</div>
 
-    <div class="ro-window main-battle-area">
-      <div class="stage-badge">📍 普隆德拉 南門外郊區</div>
+<script>
+    let player = { level: 1, hp: 100, maxHp: 100, sp: 30, maxSp: 30, atk: 12, exp: 0, maxExp: 30 };
+    let monster = { name: '波利', hp: 50, maxHp: 50, atk: 5, expReward: 15 };
 
-      <div class="sprite-box">
-        <div id="player-dmg"></div>
-        <img class="sprite-img" src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Player">
-      </div>
-
-      <div class="sprite-box">
-        <div id="mob-dmg"></div>
-        <div style="width:70px; height:6px; background:#ccc; border:1px solid #888; margin-bottom:4px; border-radius:2px; overflow:hidden;">
-          <div id="mob-hp-bar" style="width:100%; height:100%; background:#e74c3c;"></div>
-        </div>
-        <img id="mob-sprite" class="sprite-img" src="./images/poring.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png'" alt="Monster">
-      </div>
-    </div>
-
-    <div class="ro-window menu-panel">
-      <div class="ro-btn-classic" onclick="togglePopup('狩獵場視窗')">🗺️ 狩獵場</div>
-      <div class="ro-btn-classic" onclick="togglePopup('物品欄 (背包)')">🎒 背包</div>
-      <div class="ro-btn-classic" onclick="togglePopup('人物能力屬性狀態欄')">⚡ 能力/屬性</div>
-      <div class="ro-btn-classic" onclick="togglePopup('個人聊天室視窗')">💬 聊天室</div>
-      <div class="ro-btn-classic" onclick="togglePopup('交易所視窗')">⚖️ 交易所</div>
-      <div class="ro-btn-classic" onclick="togglePopup('遊戲選擇視窗')">⚙️ 設定</div>
-    </div>
-
-    <div class="ro-window battle-log-panel">
-      <div class="ro-header">
-        <span>⚔️ 戰鬥日誌</span>
-        <div class="ro-header-controls"><span>_</span><span>x</span></div>
-      </div>
-      <div id="log-list" class="log-body">
-        <div class="log-sys">[系統] 成功連線至伺服器，自動尋敵打怪中...</div>
-      </div>
-    </div>
-
-    <div class="ro-window chat-panel">
-      <div class="ro-header">
-        <span>💬 頻道聊天</span>
-        <div class="ro-header-controls"><span>_</span><span>x</span></div>
-      </div>
-      <div class="chat-tabs">
-        <div class="chat-tab active">全服</div>
-        <div class="chat-tab">公會</div>
-        <div class="chat-tab">隊伍</div>
-      </div>
-      <div id="chat-messages" class="chat-body">
-        <div style="color:#888;">[全服] 世界頻道連線成功。</div>
-      </div>
-      <div class="chat-input-row">
-        <input id="chat-input" type="text" placeholder="輸入訊息..." onkeypress="handleChatKey(event)">
-        <button class="ro-btn-classic" style="padding:1px 6px; font-size:11px; margin-left:4px;" onclick="sendChat()">送出</button>
-      </div>
-    </div>
-
-    <div id="ro-popup" class="ro-window ro-popup-window">
-      <div class="ro-header">
-        <span id="popup-title">物品欄</span>
-        <div class="ro-header-controls"><span onclick="closePopup()" style="cursor:pointer;">x</span></div>
-      </div>
-      <div id="popup-content" class="popup-body">
-        彈出內容加載中...
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const player = { level: 1, hp: 323, maxHp: 323, sp: 188, maxSp: 188, atk: 22, exp: 0, maxExp: 50, zeny: 0 };
-    const currentMob = { name: "波利", hp: 70, maxHp: 70, atk: 8, exp: 20, zeny: 15 };
-
-    function showDmg(boxId, amount) {
-      const box = document.getElementById(boxId);
-      const pop = document.createElement('div');
-      pop.className = 'damage-pop';
-      pop.innerText = amount;
-      box.appendChild(pop);
-      setTimeout(() => pop.remove(), 600);
+    function log(msg) {
+        const logBox = document.getElementById('battle-log');
+        logBox.innerHTML += msg + '<br>';
+        logBox.scrollTop = logBox.scrollHeight;
     }
 
-    function addLog(text, typeClass = '') {
-      const list = document.getElementById('log-list');
-      const item = document.createElement('div');
-      if (typeClass) item.className = typeClass;
-      item.innerText = text;
-      list.appendChild(item);
-      list.scrollTop = list.scrollHeight;
+    function showDamage(targetEl, amount) {
+        const popup = document.createElement('div');
+        popup.className = 'damage-popup';
+        popup.innerText = amount;
+        targetEl.appendChild(popup);
+        setTimeout(() => popup.remove(), 800);
     }
 
     function updateUI() {
-      document.getElementById('hp-fill').style.width = Math.max(0, (player.hp / player.maxHp)*100) + '%';
-      document.getElementById('hp-text').innerText = `${player.hp} / ${player.maxHp}`;
-      document.getElementById('sp-fill').style.width = Math.max(0, (player.sp / player.maxSp)*100) + '%';
-      document.getElementById('sp-text').innerText = `${player.sp} / ${player.maxSp}`;
+        document.getElementById('player-level').innerText = player.level;
+        document.getElementById('hp-text').innerText = `${player.hp}/${player.maxHp}`;
+        document.getElementById('hp-fill').style.width = `${(player.hp / player.maxHp) * 100}%`;
+        document.getElementById('player-hp-bar').style.width = `${(player.hp / player.maxHp) * 100}%`;
 
-      const expPct = Math.min(100, (player.exp / player.maxExp)*100);
-      document.getElementById('exp-fill').style.width = expPct + '%';
-      document.getElementById('exp-text').innerText = `${Math.floor(expPct)}%`;
-
-      document.getElementById('base-lv').innerText = player.level;
-      document.getElementById('mob-hp-bar').style.width = Math.max(0, (currentMob.hp / currentMob.maxHp)*100) + '%';
-      document.getElementById('zeny-num').innerText = player.zeny;
+        document.getElementById('monster-hp-bar').style.width = `${(monster.hp / monster.maxHp) * 100}%`;
     }
 
-    function battleTurn() {
-      const pDmg = Math.floor(player.atk * (0.85 + Math.random() * 0.3));
-      currentMob.hp -= pDmg;
-      showDmg('mob-dmg', pDmg);
-      addLog(`對 ${currentMob.name} 造成 ${pDmg} 點傷害！`, 'log-dmg');
+    function gameLoop() {
+        if (monster.hp > 0) {
+            // 玩家攻擊怪物
+            let dmg = player.atk + Math.floor(Math.random() * 5);
+            monster.hp -= dmg;
+            if (monster.hp < 0) monster.hp = 0;
+            showDamage(document.getElementById('monster-entity'), dmg);
+            log(`你對 ${monster.name} 造成了 ${dmg} 點傷害！`);
 
-      if (currentMob.hp <= 0) {
-        currentMob.hp = 0;
-        player.exp += currentMob.exp;
-        player.zeny += currentMob.zeny;
-        addLog(`擊殺 ${currentMob.name}！獲得 ${currentMob.exp} 經驗值，+${currentMob.zeny} Zeny`, 'log-reward');
-
-        if (player.exp >= player.maxExp) {
-          player.level++;
-          player.exp -= player.maxExp;
-          player.maxExp = Math.floor(player.maxExp * 1.5);
-          player.maxHp += 30;
-          player.hp = player.maxHp;
-          player.atk += 5;
-          addLog(`🎉 Base Level Up！升級至 Lv.${player.level}！`, 'log-sys');
+            if (monster.hp === 0) {
+                log(`<span style="color:#ffff55;">擊敗了 ${monster.name}！獲得 ${monster.expReward} 經驗值。</span>`);
+                player.exp += monster.expReward;
+                if (player.exp >= player.maxExp) {
+                    player.level++;
+                    player.exp -= player.maxExp;
+                    player.maxExp = Math.floor(player.maxExp * 1.5);
+                    player.maxHp += 20;
+                    player.hp = player.maxHp;
+                    player.atk += 3;
+                    log(`<span style="color:#ff77ff; font-weight:bold;">LEVEL UP! 你升到了 Lv.${player.level}！</span>`);
+                }
+                setTimeout(respawnMonster, 1500);
+            }
         }
 
         updateUI();
-        setTimeout(() => { currentMob.hp = currentMob.maxHp; updateUI(); }, 1000);
-        return;
-      }
-
-      updateUI();
     }
 
-    function sendChat() {
-      const input = document.getElementById('chat-input');
-      if (!input.value.trim()) return;
-      const box = document.getElementById('chat-messages');
-      const msg = document.createElement('div');
-      msg.innerText = `[戀愛達人]: ${input.value}`;
-      box.appendChild(msg);
-      box.scrollTop = box.scrollHeight;
-      input.value = '';
+    function respawnMonster() {
+        monster.hp = monster.maxHp;
+        log(`${monster.name} 重生了！`);
+        updateUI();
     }
 
-    function handleChatKey(e) { if (e.key === 'Enter') sendChat(); }
+    setInterval(gameLoop, 2000);
+</script>
 
-    function togglePopup(title) {
-      const pop = document.getElementById('ro-popup');
-      document.getElementById('popup-title').innerText = title;
-      document.getElementById('popup-content').innerHTML = `<p>這是<b>${title}</b>的遊戲介面。</p><br><p>可在這裡進行裝備更換、屬性點數分配或地圖切換！</p>`;
-      pop.style.display = 'flex';
-    }
-
-    function closePopup() {
-      document.getElementById('ro-popup').style.display = 'none';
-    }
-
-    setInterval(battleTurn, 1200);
-    updateUI();
-  </script>
 </body>
 </html>
