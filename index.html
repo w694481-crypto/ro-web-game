@@ -3,491 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ragnarok Idle RPG - RO 經典放置版</title>
+  <title>Ragnarok Idle RPG - 經典 RO 放置版</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
-      font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+      font-family: "Tahoma", "Microsoft JhengHei", sans-serif;
     }
 
     html, body {
       width: 100%;
       height: 100%;
-      background-color: #0b0b0e;
-      color: #e0e0e0;
+      background-color: #1a1a1a;
       overflow: hidden;
     }
 
-    /* 主遊戲框架：滿版佈局 */
+    /* 主遊戲框架：滿版 16:9 風格佈局，背景為 RO 經典石磚圖案 */
     .game-viewport {
       width: 100vw;
       height: 100vh;
-      background-color: #121318;
+      background: #8e9098 url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png') repeat;
+      background-size: 120px 120px;
       display: grid;
-      grid-template-columns: 320px 1fr 200px;
-      grid-template-rows: 1fr 220px;
+      grid-template-columns: 300px 1fr 220px;
+      grid-template-rows: 1fr 210px;
       gap: 6px;
       padding: 6px;
-      background-image: radial-gradient(#1a1c29 1px, transparent 0);
-      background-size: 16px 16px;
+      position: relative;
     }
 
-    /* RO 經典視窗框 */
-    .ro-box {
-      background: rgba(22, 24, 35, 0.9);
-      border: 2px solid #4a4d6b;
-      border-radius: 4px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+    /* RO 原版風格視窗框 (淺色石膏半透明風格) */
+    .ro-window {
+      background: rgba(240, 244, 248, 0.92);
+      border: 2px solid #a4b4c8;
+      border-radius: 5px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
+    /* 經典 RO 視窗天藍色標題列 */
     .ro-header {
-      background: linear-gradient(180deg, #3d415d 0%, #222536 100%);
-      padding: 6px 10px;
-      font-size: 13px;
+      background: linear-gradient(180deg, #7bb3ed 0%, #4a8ddb 100%);
+      padding: 3px 8px;
+      font-size: 12px;
       font-weight: bold;
-      color: #d1d5f0;
-      border-bottom: 1px solid #4a4d6b;
+      color: #ffffff;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+      border-bottom: 1px solid #3b78c4;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      height: 22px;
     }
 
-    /* ================= 1. 左上角：手遊風格圓形頭像與膠囊血條 ================= */
+    .ro-header-controls span {
+      cursor: pointer;
+      font-size: 11px;
+      margin-left: 5px;
+      padding: 0 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+
+    /* ================= 1. 左上角：RO 經典基本訊息視窗 ================= */
     .player-status-panel {
       grid-column: 1;
       grid-row: 1;
-      padding: 12px;
-      gap: 12px;
-      justify-content: flex-start;
     }
 
-    .status-top-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* 圓形頭像外框 */
-    .avatar-wrapper {
-      position: relative;
+    .status-body {
+      padding: 8px;
       display: flex;
       flex-direction: column;
+      gap: 8px;
+      color: #333;
+      font-size: 12px;
+    }
+
+    .char-top-info {
+      display: flex;
+      gap: 10px;
       align-items: center;
+    }
+
+    .char-avatar {
+      width: 50px;
+      height: 50px;
+      border: 2px solid #8ca0be;
+      border-radius: 4px;
+      background: #fff;
+      overflow: hidden;
       flex-shrink: 0;
     }
 
-    .avatar-circle {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: 3px solid #6b6f94;
-      background: #000;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.6);
-    }
-
-    .avatar-circle img {
+    .char-avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    /* 等級標籤（懸掛在頭像下方） */
-    .level-badge {
-      position: absolute;
-      bottom: -6px;
-      background: #1e202e;
-      border: 2px solid #5a5e82;
-      color: #ffde7d;
-      font-size: 11px;
-      font-weight: bold;
-      padding: 1px 8px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    /* 右側膠囊血條區 */
-    .capsule-bars {
+    .char-text-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      flex-grow: 1;
+      gap: 2px;
     }
 
-    .capsule-row {
+    .char-name-title {
+      font-weight: bold;
+      color: #1a3c6d;
+      font-size: 13px;
+    }
+
+    /* RO 原版條狀圖 */
+    .ro-bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .ro-bar-row {
       display: flex;
       align-items: center;
-      height: 24px;
-      background: #181a24;
-      border-radius: 12px;
-      border: 1px solid #424666;
+      font-size: 11px;
+      gap: 6px;
+    }
+
+    .ro-bar-label {
+      width: 55px;
+      font-weight: bold;
+      color: #444;
+      text-align: right;
+    }
+
+    .ro-bar-container {
+      flex-grow: 1;
+      height: 13px;
+      background: #e1e6ee;
+      border: 1px solid #99a8bd;
+      border-radius: 2px;
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
     }
 
-    /* 左側 HP / SP 圓形小標籤 */
-    .capsule-tag {
-      width: 32px;
-      height: 22px;
-      background: linear-gradient(180deg, #f0f2f5 0%, #d1d5db 100%);
-      color: #111;
-      font-size: 11px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 11px;
-      z-index: 2;
-      box-shadow: 1px 0 3px rgba(0,0,0,0.4);
-    }
-
-    /* 條狀進度填滿 */
-    .capsule-fill {
-      position: absolute;
-      top: 0; left: 0;
+    .ro-bar-fill {
       height: 100%;
-      transition: width 0.2s ease;
-      z-index: 1;
+      transition: width 0.2s;
     }
 
-    .hp-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); }
-    .sp-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
-
-    /* 條內數字 */
-    .capsule-text {
-      position: absolute;
-      width: 100%;
-      text-align: center;
-      font-size: 11px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 1px 1px 2px #000;
-      z-index: 3;
-      line-height: 22px;
-    }
-
-    /* 經驗值條 (維持下方簡約風) */
-    .exp-wrapper {
-      height: 14px;
-      background: #0a0b10;
-      border: 1px solid #444760;
-      border-radius: 7px;
-      position: relative;
-      overflow: hidden;
-      margin-top: 4px;
-    }
-
-    .exp-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #f1c40f, #f39c12);
-      transition: width 0.2s ease;
-    }
-
-    .exp-text {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      font-size: 10px; line-height: 14px; text-align: center; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000;
-    }
-
-    .currency-info {
-      background: rgba(0,0,0,0.4);
-      padding: 8px;
-      border-radius: 3px;
-      border: 1px solid #33364d;
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      color: #ffd700;
-      margin-top: auto;
-    }
-
-    /* ================= 2. 中間：主戰鬥區 ================= */
-    .main-battle-area {
-      grid-column: 2;
-      grid-row: 1;
-      position: relative;
-      background: #191b26 url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png') no-repeat center;
-      background-size: cover;
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-end;
-      padding-bottom: 40px;
-    }
-
-    .stage-title {
-      position: absolute;
-      top: 15px;
-      background: rgba(0,0,0,0.65);
-      padding: 6px 20px;
-      border-radius: 15px;
-      border: 1px solid #666;
-      font-size: 14px;
-      color: #fff;
-    }
-
-    .character-box {
-      width: 140px;
-      height: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      position: relative;
-    }
-
-    .sprite-img {
-      max-width: 120px;
-      max-height: 120px;
-      image-rendering: pixelated;
-    }
-
-    .damage-popup {
-      position: absolute;
-      top: 0;
-      font-size: 24px;
-      font-weight: bold;
-      color: #ffeb3b;
-      text-shadow: 2px 2px 0px #000;
-      animation: floatUp 0.6s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-40px); }
-    }
-
-    /* ================= 3. 右上角：選單按鈕區 ================= */
-    .menu-panel {
-      grid-column: 3;
-      grid-row: 1;
-      padding: 10px;
-      gap: 10px;
-    }
-
-    .ro-btn {
-      background: linear-gradient(180deg, #4f5378 0%, #2c2f4a 100%);
-      border: 1px solid #6c719c;
-      color: #fff;
-      padding: 12px 8px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 3px;
-      cursor: pointer;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-    }
-
-    .ro-btn:hover { background: linear-gradient(180deg, #616694 0%, #3a3e61 100%); }
-
-    /* ================= 4. 下方偏左：傷害日誌 ================= */
-    .battle-log-panel {
-      grid-column: 1 / span 2;
-      grid-row: 2;
-    }
-
-    .log-content {
-      flex-grow: 1;
-      padding: 10px;
-      font-size: 13px;
-      overflow-y: auto;
-      color: #bbb;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .log-entry-damage { color: #ff7675; }
-    .log-entry-exp { color: #74b9ff; }
-    .log-entry-drop { color: #ffeaa7; }
-
-    /* ================= 5. 下方偏右：聊天室 ================= */
-    .chat-panel {
-      grid-column: 3;
-      grid-row: 2;
-    }
-
-    .chat-tabs {
-      display: flex;
-      background: #1a1c29;
-      border-bottom: 1px solid #3c3f58;
-    }
-
-    .chat-tab {
-      flex: 1;
-      font-size: 11px;
-      padding: 5px 0;
-      text-align: center;
-      cursor: pointer;
-      color: #888;
-      border-right: 1px solid #2a2d42;
-    }
-
-    .chat-tab.active {
-      color: #fff;
-      background: #2a2d42;
-      font-weight: bold;
-    }
-
-    .chat-messages {
-      flex-grow: 1;
-      padding: 8px;
-      font-size: 12px;
-      overflow-y: auto;
-      color: #ddd;
-    }
-
-    .chat-input-box {
-      display: flex;
-      padding: 6px;
-      background: #14151d;
-      border-top: 1px solid #3a3d54;
-    }
-
-    .chat-input-box input {
-      flex-grow: 1;
-      background: #000;
-      border: 1px solid #333;
-      color: #fff;
-      font-size: 12px;
-      padding: 4px 8px;
-      outline: none;
-    }
-
-    /* Modal 彈窗 */
-    .modal-overlay {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 99;
-    }
-
-    .modal-window {
-      width: 360px;
-      background: #222534;
-      border: 2px solid #5d628c;
-      border-radius: 4px;
-    }
-
-    .modal-body { padding: 16px; font-size: 14px; }
-  </style>
-</head>
-<body>
-
-  <div class="game-viewport">
-
-    <!-- 1. 左上角：手遊風格頭像與膠囊血條 -->
-    <div class="ro-box player-status-panel">
-      <div class="status-top-container">
-        <!-- 圓形頭像與等級標籤 -->
-        <div class="avatar-wrapper">
-          <div class="avatar-circle">
-            <img src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Avatar">
-          </div>
-          <div id="char-level-badge" class="level-badge">Lv. 1</div>
-        </div>
-
-        <!-- 膠囊 HP / SP 條 -->
-        <div class="capsule-bars">
-          <div class="capsule-row">
-            <div class="capsule-tag">HP</div>
-            <div id="hp-fill" class="capsule-fill hp-fill" style="width: 100%;"></div>
-            <div id="hp-text" class="capsule-text">100 / 100</div>
-          </div>
-          <div class="capsule-row">
-            <div class="capsule-tag">SP</div>
-            <div id="mp-fill" class="capsule-fill sp-fill" style="width: 100%;"></div>
-            <div id="mp-text" class="capsule-text">30 / 30</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 經驗值條 -->
-      <div class="exp-wrapper">
-        <div id="exp-fill" class="exp-fill" style="width: 0%;"></div>
-        <div id="exp-text" class="exp-text">EXP 0%</div>
-      </div>
-
-      <div class="currency-info">
-        <span>金幣 (Zeny):</span>
-        <span id="zeny-num" style="font-weight:bold;">0 Z</span>
-      </div>
-    </div>
-
-    <!-- 2. 中間：主戰鬥區 -->
-    <div class="ro-box main-battle-area">
-      <div class="stage-title">📍 普隆德拉 南門外郊區</div>
-
-      <div class="character-box">
-        <div id="player-dmg-box"></div>
-        <img class="sprite-img" src="./images/player.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'" alt="Player">
-      </div>
-
-      <div class="character-box">
-        <div id="mob-dmg-box"></div>
-        <div style="width:80px; height:7px; background:#000; border:1px solid #ff4d4d; margin-bottom:6px; border-radius:3px; overflow:hidden;">
-          <div id="mob-hp-bar" style="width:100%; height:100%; background:#ff4d4d;"></div>
-        </div>
-        <img id="mob-sprite" class="sprite-img" src="./images/poring.gif" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/39.png'" alt="Monster">
-      </div>
-    </div>
-
-    <!-- 3. 右上角：選單 -->
-    <div class="ro-box menu-panel">
-      <div class="ro-btn" onclick="openModal('狩獵場地圖')">🗺️ 狩獵場</div>
-      <div class="ro-btn" onclick="openModal('背包道具')">🎒 背包</div>
-      <div class="ro-btn" onclick="openModal('角色能力與技能')">⚡ 能力/技能</div>
-      <div class="ro-btn" onclick="openModal('交易所')">⚖️ 交易所</div>
-      <div class="ro-btn" onclick="openModal('系統設定')">⚙️ 設定</div>
-    </div>
-
-    <!-- 4. 下方偏左：傷害日誌 -->
-    <div class="ro-box battle-log-panel">
-      <div class="ro-header">⚔️ 戰鬥傷害日誌</div>
-      <div id="log-list" class="log-content">
-        <div>[系統] 登入遊戲成功，開始自動尋敵打怪...</div>
-      </div>
-    </div>
-
-    <!-- 5. 下方偏右：聊天室 -->
-    <div class="ro-box chat-panel">
-      <div class="chat-tabs">
-        <div class="chat-tab active">全服</div>
-        <div class="chat-tab">血盟</div>
-        <div class="chat-tab">隊伍</div>
-      </div>
-      <div id="chat-list" class="chat-messages">
-        <div style="color:#888;">[全服] 世界頻道已連線</div>
-      </div>
-      <div class="chat-input-box">
-        <input id="chat-input" type="text" placeholder="輸入訊息..." onkeypress="handleChatKey(event)">
-        <button class="ro-btn" style="padding:2px 6px; font-size:11px;" onclick="sendChat()">送出</button>
-      </div>
-    </div>
-
-    <!-- Modal 彈窗 -->
-    <div id="modal-overlay" class="modal-overlay">
-      <div class="modal-window">
-        <div class="ro-header">
-          <span id="modal-title">視窗</span>
-          <span style="cursor:pointer;" onclick="closeModal()">✕</span>
-        </div>
-        <div id="modal-body" class="modal-body">內容加載中...</div>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    const player = { level: 1, hp: 120, maxHp: 120, mp: 30, maxMp: 30, atk: 18, exp: 0, maxExp:
+    .fill-hp { background: linear
